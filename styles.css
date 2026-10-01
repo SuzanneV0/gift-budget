@@ -122,6 +122,8 @@ code { font-size: .9em; }
 .skip { position: absolute; left: -999px; }
 .skip:focus { left: 1rem; top: 1rem; z-index: 100; background: var(--surface); padding: .5rem 1rem; }
 :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+/* main is focused after each page change (for screen readers); it isn't a control, so no outline. */
+main:focus, main:focus-visible { outline: none; }
 
 .demo-banner {
   background: var(--near-soft);
