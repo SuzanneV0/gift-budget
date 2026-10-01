@@ -36,7 +36,7 @@ Open http://localhost:5173. With `config.js` left empty, the app runs in **demo 
 
 The live setup: Vercel project **gift-budget** is linked to Supabase project **GiftingSmart** through the Vercel Supabase integration.
 
-1. **Supabase ↔ Vercel**: install the Supabase integration on the Vercel project. It adds `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` and friends to the project's environment variables. On each deploy, `scripts/write-config.mjs` writes those two public values into `config.js` (never the secret or service role keys). Without them, the build keeps the demo-mode `config.js`.
+1. **Supabase ↔ Vercel**: install the Supabase integration on the Vercel project. It adds `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` and friends to the project's environment variables. On each deploy, `scripts/build.mjs` copies the site into `dist/` and writes those two public values into its `config.js` (never the secret or service role keys). Without them, the build keeps the demo-mode `config.js`.
 2. **Google OAuth client**: in [Google Cloud Console](https://console.cloud.google.com/apis/credentials), create an OAuth client ID (type "Web application").
    - Authorized redirect URI: `https://<project-ref>.supabase.co/auth/v1/callback`
    - Configure the OAuth consent screen (app name, support email).
@@ -61,7 +61,7 @@ Sale rules live in `_shared/pricing.js`: an alert fires when the price drops at 
 
 ## Deploy
 
-Import the repo in Vercel (framework "Other"; `vercel.json` sets the build command that writes `config.js`). `vercel.json` sets security headers; `.vercelignore` keeps migrations and server code out of the static site. Add the production URL to Supabase's redirect URLs.
+Import the repo in Vercel (framework "Other"; `vercel.json` sets the build command and output directory). Only the files listed in `scripts/build.mjs` are published; `vercel.json` also sets security headers. Add the production URL to Supabase's redirect URLs.
 
 ## Notes and next steps
 

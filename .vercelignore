@@ -1,5 +1,5 @@
-# Only the static site is deployed. supabase/functions/_shared/pricing.js is
-# kept because the browser imports it for demo mode and sale badges.
+# Server-side code and docs aren't needed by the build (scripts/build.mjs
+# copies only the site files into dist/).
 supabase/migrations
 supabase/config.toml
 supabase/functions/check-prices
