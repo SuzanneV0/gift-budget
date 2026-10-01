@@ -124,12 +124,27 @@ code { font-size: .9em; }
 
 /* ---------- header / nav */
 .site-header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  /* Navy bar that continues the navy page edges. */
+  background: var(--navy);
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
   position: sticky;
   top: 0;
   z-index: 10;
+  --logo-lid: var(--maize);
 }
+.site-header .brand,
+.site-header .account-link { color: var(--ghost); }
+.site-header .nav-link,
+.site-header .nav-right > .icon-btn { color: #c3c4d4; }
+.site-header .nav-link:hover,
+.site-header .nav-right > .icon-btn:hover,
+.site-header .account-link:hover,
+.site-header .account-link[aria-current='page'] { background: rgb(255 255 255 / 10%); color: var(--ghost); }
+.site-header .nav-link[aria-current='page'] { background: rgb(146 220 229 / 16%); color: var(--sky); }
+.site-header .avatar { background: var(--sky); color: var(--navy); }
+.site-header .btn.primary { background: var(--sky); color: var(--navy); }
+.site-header .btn.primary:hover:not(:disabled) { background: #b6e9ef; }
+.site-header :focus-visible { outline-color: var(--sky); }
 .nav {
   max-width: 1040px;
   margin: 0 auto;
@@ -245,6 +260,11 @@ main {
 }
 /* Fade the content, not the column, so the navy edges don't show through. */
 main[aria-busy='true'] > * { opacity: .6; }
+/* Soft shadow on the column's sides only, so it sits on top of the navy edges. */
+main, .site-footer {
+  box-shadow: 0 0 36px rgb(15 16 30 / 35%);
+  clip-path: inset(0 -48px);
+}
 .site-footer {
   max-width: 1040px;
   width: 100%;
