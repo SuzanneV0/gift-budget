@@ -1,79 +1,90 @@
-/* Palette: navy #2b2d42 · sky #92dce5 · ghost white #f8f7f9 · maize #f7ec59 · pink #ff66d8.
-   The bright colours are used as fills; each has a deeper "-text" shade for
-   readable text on light backgrounds. */
+/* Palette "Bright": amber #ffbe0b · orange #fb5607 · rose #ff006e · violet #8338ec · azure #3a86ff,
+   plus a violet-tinted ink for text, header and page edges.
+   Bright colours are fills; each has a deeper "-text" shade for readable text. */
 :root {
-  --navy: #2b2d42;
-  --sky: #92dce5;
-  --ghost: #f8f7f9;
-  --maize: #f7ec59;
-  --pink: #ff66d8;
+  --ink: #16132a;
+  --paper: #faf8fd;
+  --amber: #ffbe0b;
+  --orange: #fb5607;
+  --rose: #ff006e;
+  --violet: #8338ec;
+  --azure: #3a86ff;
 
-  --bg: var(--ghost);
+  --bg: var(--paper);
   --surface: #ffffff;
-  --surface-2: #efeef3;
-  --text: var(--navy);
-  --muted: #5c5e73;
-  --border: #e1e0e8;
-  --primary: var(--navy);
-  --primary-strong: #1b1c2b;
-  --primary-soft: #def4f7;
+  --surface-2: #f1eef7;
+  --text: var(--ink);
+  --muted: #5d5873;
+  --border: #e4e0ee;
+  --primary: var(--violet);
+  --primary-strong: #6a1fd6;
+  --primary-soft: #efe6fd;
   --on-primary: #ffffff;
-  --link: #1a6f7b;
-  --accent: var(--pink);
-  --accent-text: #b0128a;
-  --accent-soft: #ffe3f7;
-  --on-accent: var(--navy);
-  --ok: var(--navy);
-  --ok-text: #1a6f7b;
-  --near: var(--maize);
-  --near-text: #6f6400;
-  --near-soft: #fdf9d2;
-  /* Over budget stays red so it never reads as a sale (pink). */
-  --over: #d62839;
-  --over-text: #b3172a;
-  --over-soft: #fde4e6;
-  --danger: #c42032;
+  --link: #6a1fd6;
+  --accent: var(--rose);
+  --accent-text: #c4005a;
+  --accent-soft: #ffe0ee;
+  --on-accent: var(--ink);
+  /* Sales are good news: azure, kept well away from the over-budget red. */
+  --sale: var(--azure);
+  --sale-text: #1a5fd0;
+  --sale-soft: #e3eeff;
+  --target-text: #b53a00;
+  --target-soft: #ffe8dc;
+  --ok: var(--violet);
+  --ok-text: #6a1fd6;
+  --near: var(--amber);
+  --near-text: #8a5a00;
+  --near-soft: #fff4d1;
+  /* Over budget stays a true red. */
+  --over: #e0262c;
+  --over-text: #c01a20;
+  --over-soft: #fde4e5;
+  --danger: #d11f25;
   --on-danger: #ffffff;
-  --planned: var(--sky);
-  --step: var(--maize);
-  --logo-box: var(--sky);
-  --logo-lid: var(--navy);
-  --logo-ribbon: var(--pink);
-  --shadow: 0 1px 2px rgb(43 45 66 / 6%), 0 4px 16px rgb(43 45 66 / 7%);
+  --planned: #9ec5ff;
+  --step: var(--amber);
+  --logo-box: var(--violet);
+  --logo-lid: var(--amber);
+  --logo-ribbon: var(--rose);
+  --shadow: 0 1px 2px rgb(22 19 42 / 6%), 0 4px 16px rgb(22 19 42 / 7%);
   --radius: 14px;
   --font-heading: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  /* Page edges either side of the content column. */
-  --frame: var(--navy);
+  /* Page edges either side of the content column, and the header. */
+  --frame: var(--ink);
   --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #1f2030;
-    --surface: var(--navy);
-    --surface-2: #363852;
-    --text: var(--ghost);
-    --muted: #b5b6c6;
-    --border: #45475f;
-    --primary: var(--sky);
-    --primary-strong: #b6e9ef;
-    --primary-soft: #2f4a59;
-    --on-primary: var(--navy);
-    --link: var(--sky);
-    --accent-text: #ff8fe2;
-    --accent-soft: #4b2b4a;
-    --ok: var(--sky);
-    --ok-text: var(--sky);
-    --near-text: var(--maize);
-    --near-soft: #45421f;
-    --over: #ff5a6a;
-    --over-text: #ff8a95;
-    --over-soft: #4a2228;
-    --danger: #ff5a6a;
-    --on-danger: var(--navy);
-    --planned: #6a6d92;
-    --logo-lid: var(--maize);
+    --bg: #1c1833;
+    --surface: #24203d;
+    --surface-2: #2f2a4c;
+    --text: #f4f1fa;
+    --muted: #b8b2cd;
+    --border: #3c3659;
+    --primary: #a879f7;
+    --primary-strong: #c1a0fa;
+    --primary-soft: #33275a;
+    --on-primary: var(--ink);
+    --link: #c1a0fa;
+    --accent-text: #ff6fa8;
+    --accent-soft: #4a1f37;
+    --sale-text: #8db8ff;
+    --sale-soft: #1f2f55;
+    --target-text: #ff8a50;
+    --target-soft: #46281a;
+    --ok: #a879f7;
+    --ok-text: #c1a0fa;
+    --near-text: var(--amber);
+    --near-soft: #3f3317;
+    --over: #ff5a5f;
+    --over-text: #ff8589;
+    --over-soft: #4a2229;
+    --danger: #ff5a5f;
+    --on-danger: var(--ink);
+    --planned: #4d6aa8;
     --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 25%);
     color-scheme: dark;
   }
@@ -124,27 +135,26 @@ code { font-size: .9em; }
 
 /* ---------- header / nav */
 .site-header {
-  /* Navy bar that continues the navy page edges. */
-  background: var(--navy);
+  /* Dark bar that continues the dark page edges. */
+  background: var(--frame);
   border-bottom: 1px solid rgb(255 255 255 / 8%);
   position: sticky;
   top: 0;
   z-index: 10;
-  --logo-lid: var(--maize);
 }
 .site-header .brand,
-.site-header .account-link { color: var(--ghost); }
+.site-header .account-link { color: #f4f1fa; }
 .site-header .nav-link,
 .site-header .nav-right > .icon-btn { color: #c3c4d4; }
 .site-header .nav-link:hover,
 .site-header .nav-right > .icon-btn:hover,
 .site-header .account-link:hover,
-.site-header .account-link[aria-current='page'] { background: rgb(255 255 255 / 10%); color: var(--ghost); }
-.site-header .nav-link[aria-current='page'] { background: rgb(146 220 229 / 16%); color: var(--sky); }
-.site-header .avatar { background: var(--sky); color: var(--navy); }
-.site-header .btn.primary { background: var(--sky); color: var(--navy); }
-.site-header .btn.primary:hover:not(:disabled) { background: #b6e9ef; }
-.site-header :focus-visible { outline-color: var(--sky); }
+.site-header .account-link[aria-current='page'] { background: rgb(255 255 255 / 10%); color: #f4f1fa; }
+.site-header .nav-link[aria-current='page'] { background: rgb(131 56 236 / 30%); color: #d4bcfc; }
+.site-header .avatar { background: var(--violet); color: #fff; }
+.site-header .btn.primary { background: var(--violet); color: #fff; }
+.site-header .btn.primary:hover:not(:disabled) { background: #9655f0; }
+.site-header :focus-visible { outline-color: var(--amber); }
 .nav {
   max-width: 1040px;
   margin: 0 auto;
@@ -243,10 +253,10 @@ code { font-size: .9em; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .04em;
-  color: var(--accent-text);
+  color: var(--sale-text);
   margin-right: .3rem;
 }
-.alert-kind.target { color: var(--link); }
+.alert-kind.target { color: var(--target-text); }
 
 /* ---------- layout */
 main {
@@ -444,7 +454,7 @@ dialog::backdrop { background: rgb(15 20 18 / 45%); }
 .bar-fill, .bar-planned { position: absolute; top: 0; bottom: 0; left: 0; }
 .bar-fill { background: var(--ok); border-radius: 999px 0 0 999px; transition: width .4s ease; }
 /* Maize is light: a hairline keeps it visible against the track. */
-.bar.near .bar-fill { box-shadow: inset 0 0 0 1px rgb(43 45 66 / 25%); }
+.bar.near .bar-fill { box-shadow: inset 0 0 0 1px rgb(22 19 42 / 25%); }
 .bar-planned {
   background: repeating-linear-gradient(135deg, var(--planned) 0 6px, transparent 6px 10px);
   opacity: .9;
@@ -534,7 +544,7 @@ dialog::backdrop { background: rgb(15 20 18 / 45%); }
 .gift.bought .gift-name a { color: var(--muted); }
 .gift-sub { margin-top: .1rem; }
 .gift-spark { color: var(--primary); display: flex; }
-.gift-spark.down { color: var(--accent-text); }
+.gift-spark.down { color: var(--sale-text); }
 .gift-actions { display: flex; align-items: center; gap: .15rem; }
 .sale-tag, .target-tag {
   font-size: .7rem;
@@ -543,8 +553,8 @@ dialog::backdrop { background: rgb(15 20 18 / 45%); }
   border-radius: 999px;
   text-decoration: none;
 }
-.sale-tag { background: var(--accent-soft); color: var(--accent-text); }
-.target-tag { background: var(--primary-soft); color: var(--link); }
+.sale-tag { background: var(--sale-soft); color: var(--sale-text); }
+.target-tag { background: var(--target-soft); color: var(--target-text); }
 
 /* ---------- home */
 .hero {
@@ -590,7 +600,7 @@ dialog::backdrop { background: rgb(15 20 18 / 45%); }
   height: 32px;
   border-radius: 50%;
   background: var(--step);
-  color: var(--navy);
+  color: var(--ink);
   font-weight: 700;
   margin-bottom: .75rem;
 }
