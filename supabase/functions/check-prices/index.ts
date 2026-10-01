@@ -1,7 +1,7 @@
 // check-prices: records a new price for tracked gifts and raises sale alerts.
 //
 // Called two ways:
-//   - by pg_cron every 6 hours, with header x-cron-secret, body {"scope":"all"}
+//   - by pg_cron every 6 hours, with header x-cron-secret (from Vault), body {"scope":"all"}
 //   - by a signed-in user from the app, body {"event_id"?: uuid, "gift_id"?: uuid}
 //     (only that user's gifts are checked)
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -35,8 +35,14 @@ Deno.serve(async (req) => {
   );
 
   const body = await req.json().catch(() => ({}));
-  const cronSecret = Deno.env.get('CRON_SECRET');
-  const isCron = !!cronSecret && req.headers.get('x-cron-secret') === cronSecret;
+  // The cron job sends a secret from Vault; the database checks it.
+  const cronSecret = req.headers.get('x-cron-secret');
+  let isCron = false;
+  if (cronSecret) {
+    const { data } = await admin.rpc('verify_cron_secret', { candidate: cronSecret });
+    if (data !== true) return json({ error: 'unauthorized' }, 401);
+    isCron = true;
+  }
 
   let userId: string | null = null;
   if (!isCron) {

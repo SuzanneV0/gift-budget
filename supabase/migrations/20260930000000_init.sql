@@ -82,6 +82,9 @@ begin
   return new;
 end $$;
 
+-- Only used by the triggers below; not callable through the API.
+revoke execute on function public.check_event_owner() from public, anon, authenticated;
+
 create trigger recipients_owner before insert or update on public.recipients
   for each row execute function public.check_event_owner();
 create trigger gifts_owner before insert or update on public.gifts

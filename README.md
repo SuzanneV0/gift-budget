@@ -34,24 +34,20 @@ Open http://localhost:5173. With `config.js` left empty, the app runs in **demo 
 
 ## Connect Supabase and Google sign-in
 
-1. **Create a Supabase project** at https://supabase.com/dashboard.
+The live setup: Vercel project **gift-budget** is linked to Supabase project **GiftingSmart** through the Vercel Supabase integration.
+
+1. **Supabase ↔ Vercel**: install the Supabase integration on the Vercel project. It adds `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` and friends to the project's environment variables. On each deploy, `scripts/write-config.mjs` writes those two public values into `config.js` (never the secret or service role keys). Without them, the build keeps the demo-mode `config.js`.
 2. **Google OAuth client**: in [Google Cloud Console](https://console.cloud.google.com/apis/credentials), create an OAuth client ID (type "Web application").
    - Authorized redirect URI: `https://<project-ref>.supabase.co/auth/v1/callback`
    - Configure the OAuth consent screen (app name, support email).
 3. In Supabase, go to **Authentication → Sign In / Providers → Google**, enable it, and paste the client ID and secret.
-4. In **Authentication → URL Configuration**, set the Site URL to your production URL and add `http://localhost:5173` to the redirect URLs.
-5. **Database**: link the project and push the migrations:
-   ```bash
-   supabase link --project-ref <project-ref>
-   supabase db push
+4. In **Authentication → URL Configuration**, set the Site URL to the production URL (`https://gift-budget.vercel.app`) and add `http://localhost:5173` to the redirect URLs.
+5. **Database**: apply the migrations (`supabase link --project-ref <project-ref>` then `supabase db push`, or paste them into the SQL editor). The schedule migration creates a random `cron_secret` in Vault. Then store the project URL in Vault so the cron job knows where to call:
+   ```sql
+   select vault.create_secret('https://<project-ref>.supabase.co', 'project_url');
    ```
-   Before pushing, add two Vault secrets (Dashboard → Project Settings → Vault) that the cron job reads: `project_url` (`https://<project-ref>.supabase.co`) and `cron_secret` (any long random string).
-6. **Price checker**:
-   ```bash
-   supabase secrets set CRON_SECRET=<the same random string> PRICE_PROVIDER=mock
-   supabase functions deploy check-prices
-   ```
-7. Put the project URL and **anon/publishable key** (Project Settings → API) in `config.js`.
+6. **Price checker**: `supabase functions deploy check-prices --no-verify-jwt`. It checks its own auth: either a signed-in user's token, or the cron secret, which the database verifies. Optionally `supabase secrets set PRICE_PROVIDER=<name>` (default `mock`).
+7. **Local development against Supabase** (optional): put the project URL and publishable key in `config.js`, but don't commit them. Without them the app runs in demo mode.
 
 ## Plugging in a real price API
 
@@ -65,7 +61,7 @@ Sale rules live in `_shared/pricing.js`: an alert fires when the price drops at 
 
 ## Deploy
 
-Import the repo in Vercel (no build command, output directory = repo root). `vercel.json` sets security headers; `.vercelignore` keeps migrations and server code out of the static site. Add the production URL to Supabase's redirect URLs.
+Import the repo in Vercel (framework "Other"; `vercel.json` sets the build command that writes `config.js`). `vercel.json` sets security headers; `.vercelignore` keeps migrations and server code out of the static site. Add the production URL to Supabase's redirect URLs.
 
 ## Notes and next steps
 

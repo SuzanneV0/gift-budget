@@ -1,4 +1,5 @@
 {
+  "buildCommand": "node scripts/write-config.mjs",
   "cleanUrls": true,
   "headers": [
     {
