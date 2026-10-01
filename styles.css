@@ -41,6 +41,7 @@
   --logo-ribbon: var(--pink);
   --shadow: 0 1px 2px rgb(43 45 66 / 6%), 0 4px 16px rgb(43 45 66 / 7%);
   --radius: 14px;
+  --font-heading: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color-scheme: light;
 }
 
@@ -87,6 +88,12 @@ body {
   flex-direction: column;
 }
 h1, h2, h3 { line-height: 1.2; margin: 0 0 .5rem; }
+/* Headings, plus the brand name and heading-like titles, use Outfit. */
+h1, h2, h3, h4, h5, h6, .brand, .hc-title, .profile-name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
 h1 { font-size: clamp(1.6rem, 3vw, 2rem); }
 h2 { font-size: 1.25rem; }
 h3 { font-size: 1.05rem; }
