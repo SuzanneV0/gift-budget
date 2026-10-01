@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gift Budget: stay on budget for every gift</title>
+  <meta name="description" content="Plan gifts for birthdays, holidays, showers and housewarmings. Set a budget per event or per person, track spending, and get alerts when gifts on your list go on sale.">
+  <meta name="theme-color" content="#1f6f5c">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="config.js"></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="logo" viewBox="0 0 32 32">
+      <rect x="4" y="12" width="24" height="16" rx="3" fill="var(--primary)"/>
+      <rect x="2.5" y="8" width="27" height="6" rx="2" fill="var(--primary-strong)"/>
+      <rect x="14" y="8" width="4" height="20" fill="var(--accent)"/>
+      <path d="M16 8c-2-4.5-7-5-7-2s4 2.5 7 2Zm0 0c2-4.5 7-5 7-2s-4 2.5-7 2Z" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
+
+  <a href="#app" class="skip">Skip to content</a>
+  <div id="demo-banner" class="demo-banner" hidden>
+    Demo mode: data is saved in this browser only. Connect Supabase in <code>config.js</code> for real accounts.
+  </div>
+  <header class="site-header"><div class="nav" id="nav"></div></header>
+
+  <main id="app" tabindex="-1">
+    <noscript><p>Gift Budget needs JavaScript to run.</p></noscript>
+  </main>
+
+  <footer class="site-footer">
+    <span>Gift Budget</span>
+    <span class="muted">Prices are checked periodically and may not match the store at checkout.</span>
+  </footer>
+
+  <dialog id="dialog" aria-label="Dialog"></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

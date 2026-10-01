@@ -1,0 +1,7 @@
+# Only the static site is deployed. supabase/functions/_shared/pricing.js is
+# kept because the browser imports it for demo mode and sale badges.
+supabase/migrations
+supabase/config.toml
+supabase/functions/check-prices
+README.md
+.claude
