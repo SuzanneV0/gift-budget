@@ -50,8 +50,6 @@
   --shadow: 0 1px 2px rgb(22 19 42 / 6%), 0 4px 16px rgb(22 19 42 / 7%);
   --radius: 14px;
   --font-heading: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  /* Page edges either side of the content column, and the header. */
-  --frame: var(--ink);
   --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color-scheme: light;
 }
@@ -94,7 +92,7 @@
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background: var(--frame);
+  background: var(--bg);
   color: var(--text);
   /* Body text: Plus Jakarta Sans Light. Buttons, labels and amounts keep heavier weights. */
   font: 300 16px/1.55 var(--font-body);
@@ -135,8 +133,7 @@ code { font-size: .9em; }
 
 /* ---------- header / nav */
 .site-header {
-  /* Dark bar that continues the dark page edges. */
-  background: var(--frame);
+  background: var(--ink);
   border-bottom: 1px solid rgb(255 255 255 / 8%);
   position: sticky;
   top: 0;
@@ -266,15 +263,8 @@ main {
   margin: 0 auto;
   padding: 1.5rem 16px 3rem;
   outline: none;
-  background: var(--bg);
 }
-/* Fade the content, not the column, so the navy edges don't show through. */
 main[aria-busy='true'] > * { opacity: .6; }
-/* Soft shadow on the column's sides only, so it sits on top of the navy edges. */
-main, .site-footer {
-  box-shadow: 0 0 36px rgb(15 16 30 / 35%);
-  clip-path: inset(0 -48px);
-}
 .site-footer {
   max-width: 1040px;
   width: 100%;
@@ -285,7 +275,6 @@ main, .site-footer {
   gap: .5rem 1.5rem;
   font-size: .85rem;
   border-top: 1px solid var(--border);
-  background: var(--bg);
 }
 .card {
   background: var(--surface);
