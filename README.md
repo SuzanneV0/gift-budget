@@ -23,13 +23,20 @@ Open http://localhost:5173. With `config.js` left empty, the app runs in **demo 
 
 | Path | What it is |
 | --- | --- |
-| `index.html`, `styles.css`, `icon.svg` | Page shell and styles (light and dark) |
-| `config.js` | Supabase URL and anon key (both public) |
+| `index.html`, `styles.css`, `icon.svg` | Page shell, SEO tags and styles (light and dark) |
+| `theme.js` | Applies the saved light/dark choice before the page draws |
+| `config.js` | Supabase URL and anon key (both public); filled in at build time on Vercel |
+| `pages/` | Content for the About, Privacy, Cookies, Terms and Legal pages |
+| `scripts/build.mjs` | Vercel build: copies the site to `dist/`, generates the info pages and sitemap, writes `config.js`. **Set your name, contact email and province in `SITE` here.** |
+| `scripts/render-images.sh` | Re-renders `og-image.png` and `apple-touch-icon.png` from the HTML sources beside it |
+| `fonts/`, `vendor/` | Self-hosted fonts and supabase-js (with their licences), so visitors never contact third parties |
+| `docs/privacy-audit.md` | Privacy audit and action items |
 | `js/app.js` | Router and pages: home, log in, my account, my events, new event, event |
 | `js/store.js` | Data layer: `SupabaseStore` (real) and `LocalStore` (demo) |
 | `js/budget.js` | Budget maths and over-budget warnings |
 | `supabase/migrations/` | Tables with row-level security, plus the 6-hourly cron job |
 | `supabase/functions/check-prices/` | Edge Function that records prices and creates sale alerts |
+| `supabase/functions/delete-account/` | Edge Function that deletes the signed-in user's account and all their data |
 | `supabase/functions/_shared/pricing.js` | Sale detection and the mock price provider (shared by server and browser) |
 
 ## Connect Supabase and Google sign-in

@@ -6,13 +6,23 @@ import { mockPrice, detectAlert, round2 } from '../supabase/functions/_shared/pr
 
 export async function createStore(config) {
   if (config.supabaseUrl && config.supabaseAnonKey) {
-    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-    const client = createClient(config.supabaseUrl, config.supabaseAnonKey, {
+    await loadScript('vendor/supabase.js'); // self-hosted @supabase/supabase-js (UMD build)
+    const client = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey, {
       auth: { flowType: 'pkce', detectSessionInUrl: true, persistSession: true },
     });
     return new SupabaseStore(client);
   }
   return new LocalStore();
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error(`Couldn't load ${src}`));
+    document.head.append(s);
+  });
 }
 
 const byDate = (key) => (a, b) => new Date(a[key]) - new Date(b[key]);
@@ -51,6 +61,30 @@ class SupabaseStore {
 
   async signOut() {
     await this.db.auth.signOut();
+  }
+
+  /** Everything stored about the signed-in user, for "Download my data". */
+  async exportData() {
+    const { data: session } = await this.db.auth.getSession();
+    const u = session.session?.user;
+    const [events, notifications] = await Promise.all([
+      this.db.from('events').select('*, recipients(*), gifts(*, price_history(price, source, checked_at))'),
+      this.db.from('notifications').select('*'),
+    ]);
+    if (events.error) throw events.error;
+    if (notifications.error) throw notifications.error;
+    return {
+      account: u && { id: u.id, email: u.email, created_at: u.created_at, last_sign_in_at: u.last_sign_in_at, profile: u.user_metadata },
+      events: events.data,
+      notifications: notifications.data,
+    };
+  }
+
+  /** Permanently deletes the account and all its data (server-side). */
+  async deleteAccount() {
+    const { error } = await this.db.functions.invoke('delete-account', { body: { confirm: true } });
+    if (error) throw error;
+    await this.db.auth.signOut({ scope: 'local' });
   }
 
   async listEvents() {
@@ -227,6 +261,20 @@ class LocalStore {
     this.data = emptyData();
     this.save();
     this.emit();
+  }
+
+  async exportData() {
+    const { user, events, recipients, gifts, price_history, notifications } = this.data;
+    return { account: user, events, recipients, gifts, price_history, notifications };
+  }
+
+  async deleteAccount() {
+    try {
+      localStorage.removeItem(LOCAL_KEY);
+    } catch {
+      /* ignore */
+    }
+    await this.signOut();
   }
 
   assemble(e, withHistory) {

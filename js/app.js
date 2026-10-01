@@ -151,21 +151,81 @@ function sparkline(history) {
   </svg>`;
 }
 
+// Initials only: loading the Google profile photo would tell Google about
+// every page view, so the app never requests it.
 function avatar(u, size = 32) {
-  if (u.avatar) {
-    return `<img class="avatar" src="${esc(u.avatar)}" alt="" width="${size}" height="${size}" referrerpolicy="no-referrer">`;
-  }
   const initial = (u.name || u.email || '?').trim()[0].toUpperCase();
   return `<span class="avatar" style="width:${size}px;height:${size}px" aria-hidden="true">${esc(initial)}</span>`;
 }
 
 // ---------------------------------------------------------------- nav
 
+const ICONS = {
+  moon: '<svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+  sun: '<svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  menu: '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  close: '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+};
+
+// ---------------------------------------------------------------- theme
+
+const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+/** The saved choice: 'light', 'dark' or 'system'. */
+function themeChoice() {
+  const t = pref.get('giftbudget-theme', 'system');
+  return t === 'light' || t === 'dark' ? t : 'system';
+}
+
+function effectiveTheme() {
+  const t = themeChoice();
+  return t === 'system' ? (darkQuery.matches ? 'dark' : 'light') : t;
+}
+
+function setTheme(choice) {
+  if (choice === 'system') {
+    document.documentElement.removeAttribute('data-theme');
+    try {
+      localStorage.removeItem('giftbudget-theme');
+    } catch {
+      /* ignore */
+    }
+  } else {
+    document.documentElement.setAttribute('data-theme', choice);
+    pref.set('giftbudget-theme', choice);
+  }
+  updateThemeLabels();
+}
+
+function toggleTheme() {
+  setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark');
+}
+
+function updateThemeLabels() {
+  const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+  document.querySelectorAll('[data-theme-toggle]').forEach((b) => {
+    b.setAttribute('aria-label', `Switch to ${next} mode`);
+    b.title = `Switch to ${next} mode`;
+    const text = b.querySelector('.theme-text');
+    if (text) text.textContent = next === 'dark' ? 'Dark mode' : 'Light mode';
+  });
+  const select = document.getElementById('theme-select');
+  if (select) select.value = themeChoice();
+}
+
+darkQuery.addEventListener('change', updateThemeLabels);
+
+// ---------------------------------------------------------------- nav
+
 function renderNav() {
   const route = location.hash.slice(1) || '/';
-  const link = (href, label) =>
-    `<a href="#${href}" class="nav-link" ${route === href ? 'aria-current="page"' : ''}>${label}</a>`;
+  const current = (href) => (route === href ? 'aria-current="page"' : '');
+  const link = (href, label) => `<a href="#${href}" class="nav-link" ${current(href)}>${label}</a>`;
+  const menuLink = (href, label) => `<a href="#${href}" ${current(href)}>${label}</a>`;
   const unread = notifications.filter((n) => !n.read).length;
+  const themeBtn = `<button class="icon-btn theme-btn" data-theme-toggle>${ICONS.moon}${ICONS.sun}</button>`;
+  const menuBtn = `<button class="icon-btn menu-btn" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="menu">${ICONS.menu}</button>`;
+  const menuTheme = `<hr><button data-theme-toggle class="theme-btn">${ICONS.moon}${ICONS.sun}<span class="theme-text"></span></button>`;
 
   nav.innerHTML = `
     <a href="#/" class="brand" aria-label="Gift Budget home">
@@ -179,20 +239,67 @@ function renderNav() {
             ${link('/events/new', 'New event')}
           </nav>
           <div class="nav-right">
+            ${themeBtn}
             <button class="icon-btn bell" id="bell" aria-label="Price alerts${unread ? `, ${unread} unread` : ''}" aria-expanded="false">
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3a6 6 0 0 0-6 6v3.6L4.3 15.4A1 1 0 0 0 5.2 17h13.6a1 1 0 0 0 .9-1.6L18 12.6V9a6 6 0 0 0-6-6Zm-2.5 15a2.5 2.5 0 0 0 5 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               ${unread ? `<span class="badge">${unread > 9 ? '9+' : unread}</span>` : ''}
             </button>
-            <a href="#/account" class="account-link" ${route === '/account' ? 'aria-current="page"' : ''}>
+            <a href="#/account" class="account-link" ${current('/account')}>
               ${avatar(user, 30)}<span class="account-name">My account</span>
             </a>
+            ${menuBtn}
           </div>
-          <div class="alerts-panel" id="alerts" hidden></div>`
-        : `<div class="nav-right"><a href="#/login" class="btn primary sm">Log in / Sign up</a></div>`
+          <div class="alerts-panel" id="alerts" hidden></div>
+          <div class="menu-panel" id="menu" hidden>
+            <nav aria-label="Menu">
+              ${menuLink('/events', 'My events')}
+              ${menuLink('/events/new', 'New event')}
+              ${menuLink('/account', 'My account')}
+            </nav>
+            ${menuTheme}
+          </div>`
+        : `<div class="nav-right">
+            ${themeBtn}
+            <a href="#/login" class="btn primary sm">Log in / Sign up</a>
+            ${menuBtn}
+          </div>
+          <div class="menu-panel" id="menu" hidden>
+            <nav aria-label="Menu">
+              ${menuLink('/', 'Home')}
+              <a href="/about">About us</a>
+            </nav>
+            ${menuTheme}
+          </div>`
     }`;
 
   nav.querySelector('#bell')?.addEventListener('click', toggleAlerts);
+  nav.querySelector('#menu-btn').addEventListener('click', () => setMenu(nav.querySelector('#menu').hidden));
+  nav.querySelectorAll('[data-theme-toggle]').forEach((b) => b.addEventListener('click', toggleTheme));
+  nav.querySelectorAll('#menu a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+  updateThemeLabels();
 }
+
+function setMenu(open) {
+  const menu = nav.querySelector('#menu');
+  const btn = nav.querySelector('#menu-btn');
+  if (!menu || !btn) return;
+  menu.hidden = !open;
+  btn.setAttribute('aria-expanded', String(open));
+  btn.setAttribute('aria-label', open ? 'Close menu' : 'Menu');
+  btn.innerHTML = open ? ICONS.close : ICONS.menu;
+  if (open) {
+    const alerts = nav.querySelector('#alerts');
+    if (alerts) alerts.hidden = true;
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  const menu = nav.querySelector('#menu');
+  if (e.key === 'Escape' && menu && !menu.hidden) {
+    setMenu(false);
+    nav.querySelector('#menu-btn')?.focus();
+  }
+});
 
 function toggleAlerts() {
   const panel = nav.querySelector('#alerts');
@@ -228,6 +335,8 @@ function toggleAlerts() {
 }
 
 document.addEventListener('click', (e) => {
+  const menu = nav.querySelector('#menu');
+  if (menu && !menu.hidden && !e.target.closest('#menu, #menu-btn')) setMenu(false);
   const panel = nav.querySelector('#alerts');
   if (panel && !panel.hidden && !e.target.closest('#alerts, #bell')) {
     panel.hidden = true;
@@ -341,6 +450,8 @@ function loginPage() {
              data in this browser only. See the README to turn on real Google sign-in.</p>`
           : ''
       }
+    <p class="muted small legal-note">By continuing, you agree to the <a href="/terms">Terms of use</a> and
+        <a href="/privacy">Privacy policy</a>. We never post to your Google account or read your contacts.</p>
     </section>`;
 }
 
@@ -382,6 +493,24 @@ function accountPage() {
         <span>Browser notifications for price drops${supported ? '' : ' (not supported in this browser)'}</span>
       </label>
       <p class="muted small">Price alerts always appear under the bell icon. Browser notifications also pop up while the app is open in a tab.</p>
+      <label class="field">
+        <span>Appearance</span>
+        <select id="theme-select">
+          <option value="system">Match my device</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Your data</h2>
+      <p class="muted small">Download a copy of everything Gift Budget stores about you, or delete your account.
+        See the <a href="/privacy">Privacy policy</a> for details.</p>
+      <div class="head-actions">
+        <button class="btn ghost" id="export">Download my data</button>
+        <button class="btn ghost danger-text" id="delete-account">Delete my account</button>
+      </div>
     </section>
 
     <section class="card">
@@ -408,9 +537,68 @@ function mountAccount(root) {
     }
     pref.set('giftbudget-browser-alerts', e.target.checked ? 'on' : 'off');
   });
+  const themeSelect = root.querySelector('#theme-select');
+  themeSelect.value = themeChoice();
+  themeSelect.addEventListener('change', (e) => setTheme(e.target.value));
+  root.querySelector('#export').addEventListener('click', exportData);
+  root.querySelector('#delete-account').addEventListener('click', deleteAccountModal);
   root.querySelector('#signout').addEventListener('click', async () => {
     await store.signOut();
     go('/');
+  });
+}
+
+async function exportData() {
+  try {
+    const data = await store.exportData();
+    const blob = new Blob([JSON.stringify({ exported_at: new Date().toISOString(), ...data }, null, 2)], {
+      type: 'application/json',
+    });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `gift-budget-data-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  } catch (err) {
+    fail(err);
+  }
+}
+
+function deleteAccountModal() {
+  const form = openModal(`
+    <h2>Delete your account?</h2>
+    <p>This permanently deletes your account and everything in it: events, people, gifts, prices and alerts.
+      It can\u2019t be undone. You might want to <button type="button" class="link-btn" id="export-first">download your data</button> first.</p>
+    <label class="field">
+      <span>Type <b>DELETE</b> to confirm</span>
+      <input name="confirm" autocomplete="off" autocapitalize="characters" autofocus>
+    </label>
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" data-close>Cancel</button>
+      <button type="submit" class="btn danger" id="confirm-delete" disabled>Delete my account</button>
+    </div>`);
+  const btn = form.querySelector('#confirm-delete');
+  form.confirm.addEventListener('input', () => (btn.disabled = form.confirm.value.trim() !== 'DELETE'));
+  form.querySelector('#export-first').addEventListener('click', exportData);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (form.confirm.value.trim() !== 'DELETE') return;
+    btn.disabled = true;
+    btn.textContent = 'Deleting\u2026';
+    try {
+      await store.deleteAccount();
+      dialog.close();
+      user = null;
+      notifications = [];
+      toast('Your account and all its data have been deleted.');
+      go('/');
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Delete my account';
+      fail(err);
+    }
   });
 }
 
@@ -451,9 +639,48 @@ async function eventsPage() {
     ${past.length ? `<h2 class="section-title">Past events</h2><div class="event-grid past">${past.map(card).join('')}</div>` : ''}`;
 }
 
+// Suggested event names, covering many traditions. Holidays are labelled with
+// the year of their next occurrence, using the month they usually fall in
+// (approximate for lunar calendars, which shift from year to year).
+const HOLIDAYS = [
+  ['Christmas', 12], ['Hanukkah', 12], ['Kwanzaa', 12], ['Rosh Hashanah', 9], ['Passover', 4], ['Purim', 3],
+  ['Ramadan', 2], ['Eid al-Fitr', 3], ['Eid al-Adha', 5], ['Diwali', 11], ['Holi', 3], ['Vaisakhi', 4],
+  ['Lunar New Year', 2], ['Mid-Autumn Festival', 9], ['Nowruz', 3], ['Easter', 4], ['Three Kings Day', 1],
+  ['St. Nicholas Day', 12], ['Vesak', 5], ["Valentine's Day", 2], ["Mother's Day", 5], ["Father's Day", 6],
+  ['Secret Santa', 12],
+];
+
+function holiday(name, now = new Date()) {
+  const month = HOLIDAYS.find(([n]) => n === name)[1];
+  return `${name} ${month >= now.getMonth() + 1 ? now.getFullYear() : now.getFullYear() + 1}`;
+}
+
+const COMMON_OCCASIONS = () => [
+  'Birthday',
+  ...['Christmas', 'Hanukkah', 'Eid al-Fitr', 'Diwali', 'Lunar New Year'].map((n) => holiday(n)),
+  'Baby shower',
+  'Wedding',
+  'Housewarming',
+];
+
+const OCCASION_GROUPS = () => [
+  { title: 'Holidays and festivals', items: HOLIDAYS.map(([n]) => holiday(n)) },
+  {
+    title: 'Milestones and ceremonies',
+    items: [
+      'Birthday', 'Baby shower', 'New baby', 'Gender reveal', 'Engagement', 'Bridal shower', 'Wedding',
+      'Anniversary', 'Housewarming', 'Graduation', 'Retirement', 'Bar Mitzvah', 'Bat Mitzvah', 'Baptism',
+      'Christening', 'First Communion', 'Confirmation', 'Aqiqah', 'Quinceañera', 'Sweet 16', 'Coming of age',
+    ],
+  },
+  {
+    title: 'Just because',
+    items: ['Thank-you gift', 'Get well soon', 'Teacher gift', 'Host gift', 'Farewell', 'Congratulations', 'Sympathy'],
+  },
+];
+
 function newEventPage() {
-  const year = new Date().getFullYear();
-  const ideas = ['Birthday', `Christmas ${year}`, 'Baby shower', 'Housewarming', 'Wedding', 'Graduation', 'Anniversary'];
+  const chips = (list) => list.map((i) => `<button type="button" class="chip" data-idea="${esc(i)}">${esc(i)}</button>`).join('');
   return `
     <h1>New event</h1>
     <form class="card form" id="new-event" novalidate>
@@ -461,9 +688,13 @@ function newEventPage() {
         <span>Event name</span>
         <input name="name" required maxlength="120" placeholder="e.g. Lauren's birthday" autocomplete="off" autofocus>
       </label>
-      <div class="chips" aria-label="Suggestions">
-        ${ideas.map((i) => `<button type="button" class="chip" data-idea="${esc(i)}">${esc(i)}</button>`).join('')}
-      </div>
+      <div class="chips" aria-label="Suggestions">${chips(COMMON_OCCASIONS())}</div>
+      <details class="more-occasions">
+        <summary>More occasions</summary>
+        ${OCCASION_GROUPS()
+          .map((g) => `<div class="chip-group"><h3>${esc(g.title)}</h3><div class="chips">${chips(g.items)}</div></div>`)
+          .join('')}
+      </details>
       <label class="field">
         <span>Date <span class="muted">(optional)</span></span>
         <input type="date" name="event_date">
@@ -486,6 +717,7 @@ function newEventPage() {
 
       <fieldset class="field">
         <legend>Who are you buying for? <span class="muted" data-show="total">(optional)</span></legend>
+        <p class="muted small" style="margin:-.2rem 0 .5rem">A first name or nickname is enough.</p>
         <div id="recipient-rows"></div>
         <button type="button" class="btn ghost sm" id="add-person">+ Add person</button>
       </fieldset>
@@ -863,7 +1095,7 @@ function recipientModal(r) {
   const perPerson = current.budget_mode === 'per_recipient';
   const form = openModal(`
     <h2>${editing ? 'Edit person' : 'Add a person'}</h2>
-    <label class="field"><span>Name</span>
+    <label class="field"><span>Name <span class="muted">(a first name or nickname is enough)</span></span>
       <input name="name" required maxlength="80" value="${esc(r?.name ?? '')}" autofocus></label>
     ${
       perPerson

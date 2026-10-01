@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gift-budget.vercel.app/sitemap.xml

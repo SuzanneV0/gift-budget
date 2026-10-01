@@ -15,3 +15,7 @@ skip_nonce_check = false
 [functions.check-prices]
 # The function checks the user's JWT itself, and also accepts the cron secret.
 verify_jwt = false
+
+[functions.delete-account]
+# Checks the caller's JWT itself and only deletes that user.
+verify_jwt = false
