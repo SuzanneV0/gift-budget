@@ -1023,7 +1023,7 @@ async function onEventAction(e) {
         toast(
           res.checked
             ? `Checked ${res.checked} price${res.checked === 1 ? '' : 's'}${res.alerts ? ` · ${res.alerts} new alert${res.alerts === 1 ? '' : 's'}` : ''}.`
-            : 'No gifts are being tracked yet.',
+            : 'Nothing to check: prices are tracked only for gifts you haven’t bought yet.',
         );
       } catch (err) {
         el.disabled = false;
