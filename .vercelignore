@@ -6,3 +6,5 @@ supabase/functions/check-prices
 README.md
 .claude
 docs
+tests
+.github

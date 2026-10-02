@@ -1,5 +1,7 @@
 # GiftingSmart
 
+[![CI](https://github.com/SuzanneV0/giftingsmart/actions/workflows/ci.yml/badge.svg)](https://github.com/SuzanneV0/giftingsmart/actions/workflows/ci.yml)
+
 Keep gift-giving on budget for any occasion: birthdays, holidays, baby showers, housewarmings.
 
 - Create an event (e.g. "Lauren's birthday", "Christmas 2026", "Jane's baby shower")
@@ -62,11 +64,12 @@ flowchart LR
 | [`supabase/functions/check-prices/index.ts`](supabase/functions/check-prices/index.ts) | Two auth paths (user token or cron secret), rate limit, provider calls, alerts |
 | [`supabase/migrations/`](supabase/migrations/) | Schema, row-level security, cron schedule, rate limiting and the security hardening |
 | [`scripts/build.mjs`](scripts/build.mjs) | Build step that generates pages and refuses to publish secret keys |
+| [`tests/`](tests/) | 26 unit tests for the budget maths and the sale-detection rules, run by GitHub Actions on every push |
 | [`docs/privacy-audit.md`](docs/privacy-audit.md) | Privacy audit and security review, with findings and fixes |
 
 ### What I'd add next
 
-- Automated tests: unit tests for `budget.js` and `pricing.js`, and Playwright end-to-end tests for the main flows (create event, add gift, mark bought, over-budget warning).
+- End-to-end tests with Playwright for the main flows (create event, add gift, mark bought, over-budget warning), alongside the existing unit tests.
 - A real price provider, with per-store parsing and caching.
 - Email alerts for sales, sent from the Edge Function.
 - Shared events, so a family can plan one gift list together.
@@ -79,6 +82,12 @@ The live site has a **Try the demo** button (home page, login page and menu). It
 
 ```bash
 python -m http.server 5173
+```
+
+Run the tests (Node 22.12 or later, no install needed):
+
+```bash
+node --test "tests/*.test.mjs"
 ```
 
 Open http://localhost:5173. With `config.js` left empty, the app runs in **demo mode**: "Continue with Google" signs you in as a demo user, data stays in your browser, and sample events are created. "Check prices now" moves a simulated clock forward six hours so you can watch prices move and sale alerts appear.
@@ -94,7 +103,9 @@ Open http://localhost:5173. With `config.js` left empty, the app runs in **demo 
 | `scripts/build.mjs` | Vercel build: copies the site to `dist/`, generates the info pages and sitemap, writes `config.js`. **Set your name, contact email and province in `SITE` here.** |
 | `scripts/render-images.sh` | Re-renders `og-image.png` and `apple-touch-icon.png` from the HTML sources beside it |
 | `fonts/`, `vendor/` | Self-hosted fonts and supabase-js (with their licences), so visitors never contact third parties |
-| `docs/privacy-audit.md` | Privacy audit and action items |
+| `docs/privacy-audit.md` | Privacy audit, security review and action items |
+| `tests/`, `.github/workflows/ci.yml` | Unit tests (Node's built-in test runner) and the CI workflow that runs them, syntax-checks the scripts and runs the build |
+| `manifest.webmanifest`, `icon-*.png` | Lets visitors add GiftingSmart to their home screen |
 | `js/app.js` | Router and pages: home, log in, my account, my events, new event, event |
 | `js/store.js` | Data layer: `SupabaseStore` (real) and `LocalStore` (demo) |
 | `js/budget.js` | Budget maths and over-budget warnings |

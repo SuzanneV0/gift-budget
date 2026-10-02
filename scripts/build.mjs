@@ -22,6 +22,7 @@ const PAGES = ['about', 'privacy', 'cookies', 'terms', 'legal'];
 const OUT = 'dist';
 const FILES = [
   'index.html', 'styles.css', 'icon.svg', 'config.js', 'theme.js', 'analytics.js', 'robots.txt', 'og-image.png', 'apple-touch-icon.png',
+  'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png',
   'js', 'fonts', 'vendor', 'supabase/functions/_shared/pricing.js',
 ];
 
@@ -75,6 +76,7 @@ for (const name of PAGES) {
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
   <link rel="stylesheet" href="/fonts/fonts.css">
   <link rel="stylesheet" href="/styles.css">
   <script src="/theme.js"></script>
