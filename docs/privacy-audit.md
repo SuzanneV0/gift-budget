@@ -76,3 +76,21 @@ Items 1 to 3 were completed on October 1, 2026 (details filled in, email sign-up
 ## Optional hardening (low priority)
 - When a real price API is connected, send it only the gift's store link (never your name, email or the recipient's name), and add the provider to the privacy policy's provider table.
 - Consider a data-retention job that removes price history older than, say, 12 months for gifts that were bought long ago.
+
+## Security review (October 2, 2026)
+
+A full review of the database rules, Edge Functions, browser code and deployment settings. No high or medium severity issues were found. Fixed:
+
+| # | Finding | Fix |
+|---|---|---|
+| S1 | A gift could be linked to another account's person (data integrity; IDs are unguessable and nothing was readable) | Ownership trigger now also requires the person to belong to the gift's event |
+| S2 | Default table grants gave `anon`/`authenticated` every privilege, with RLS as the only guard | Least-privilege grants: `anon` has none; signed-in users can only read price history, read/delete alerts and update only `read` |
+| S3 | `events.notes`, `gifts.url`, alert text and price source had no length limit | Length check constraints (2,000 / 2,048 / 500 / 40) |
+| S4 | `check-prices` returned internal database error text | Generic error to the client, details in function logs |
+| S5 | Edge Functions imported `supabase-js@2` (floating) | Pinned to 2.117.2, matching `vendor/supabase.js` |
+
+Verified after the fix (as the `authenticated` role, rolled back): add person, add gift, mark bought, mark alert read and delete an event all work; cross-account link, editing alert text, writing price history, reading the rate-limit table and signed-out table access are all blocked.
+
+Accepted: `style-src 'unsafe-inline'` (style attributes for bar widths; no user data reaches styles); account deletion confirmed by typing DELETE rather than re-authenticating; Supabase's leaked-password warning (no passwords are used).
+
+**Note for future tables:** Supabase grants new tables to `anon` and `authenticated` by default. When adding a table, enable RLS and revoke what the app doesn't need, as in `20261001000100_security_hardening.sql`.

@@ -4,7 +4,7 @@
 //   - by pg_cron every 6 hours, with header x-cron-secret (from Vault), body {"scope":"all"}
 //   - by a signed-in user from the app, body {"event_id"?: uuid, "gift_id"?: uuid}
 //     (only that user's gifts are checked)
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.117.2';
 import { corsHeaders, originAllowed } from '../_shared/cors.ts';
 import { detectAlert } from '../_shared/pricing.js';
 import { getProvider } from './providers/index.ts';
@@ -74,7 +74,10 @@ Deno.serve(async (req) => {
   if (typeof body.gift_id === 'string' && UUID.test(body.gift_id)) query = query.eq('id', body.gift_id);
 
   const { data: gifts, error } = await query;
-  if (error) return json({ error: error.message }, 500);
+  if (error) {
+    console.error('gift query failed', error);
+    return json({ error: 'internal error' }, 500);
+  }
   if (!gifts?.length) return json({ checked: 0, alerts: 0 });
 
   const { data: historyRows, error: histError } = await admin
@@ -82,7 +85,10 @@ Deno.serve(async (req) => {
     .select('gift_id, price, checked_at')
     .in('gift_id', gifts.map((g) => g.id))
     .order('checked_at', { ascending: true });
-  if (histError) return json({ error: histError.message }, 500);
+  if (histError) {
+    console.error('price history query failed', histError);
+    return json({ error: 'internal error' }, 500);
+  }
 
   const historyByGift = new Map<string, { price: number; checked_at: string }[]>();
   for (const row of historyRows ?? []) {

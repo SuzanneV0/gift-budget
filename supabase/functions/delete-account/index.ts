@@ -1,7 +1,7 @@
 // delete-account: permanently deletes the signed-in user's account.
 // Every table references auth.users with ON DELETE CASCADE, so removing the
 // auth user also removes their events, people, gifts, price history and alerts.
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.117.2';
 import { corsHeaders, originAllowed } from '../_shared/cors.ts';
 
 Deno.serve(async (req) => {
