@@ -400,7 +400,7 @@ function homePage() {
         <div class="hero-cta">${cta}</div>
       </div>
       <div class="hero-card" aria-hidden="true">
-        <div class="hc-title">Christmas ${new Date().getFullYear()}</div>
+        <div class="hc-title">Maya's birthday</div>
         <div class="hc-sub">$268 spent of $350 · $82 left</div>
         <div class="bar lg ok"><div class="bar-fill" style="width:62%"></div><div class="bar-planned" style="left:62%;width:22%"></div></div>
         <ul class="hc-list">
