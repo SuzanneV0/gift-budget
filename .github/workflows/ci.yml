@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Unit tests
+        run: node --test "tests/*.test.mjs"
+
+      - name: Syntax-check browser and build scripts
+        run: |
+          for f in js/*.js theme.js analytics.js config.js supabase/functions/_shared/pricing.js scripts/build.mjs; do
+            node --check "$f"
+          done
+
+      - name: Site build (demo-mode config, no secrets needed)
+        run: node scripts/build.mjs
