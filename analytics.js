@@ -32,10 +32,12 @@
 
   function pageview(path, title) {
     if (!loaded) return;
-    window.gtag('event', 'page_view', {
-      page_location: location.origin + normalise(path),
-      page_title: title || 'GiftingSmart',
-    });
+    var page = { page_location: location.origin + normalise(path), page_title: title || 'GiftingSmart' };
+    // Set as defaults so Google's automatic events (scrolls, clicks) also use
+    // the anonymised values instead of document.title, which can contain an
+    // event's name.
+    window.gtag('set', page);
+    window.gtag('event', 'page_view', page);
   }
 
   function load() {
