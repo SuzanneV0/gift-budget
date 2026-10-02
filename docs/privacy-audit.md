@@ -33,7 +33,7 @@ This is a technical audit, not legal advice. Have a lawyer review the policies b
 | Preferences (theme, currency, alert settings) | You | Your browser (localStorage) | Your browser |
 | Server logs (IP, user agent, URL, time) | Automatic | Vercel and Supabase | Providers, for operations/security |
 
-No advertising. Google Analytics (added October 2, 2026) loads only after a visitor clicks **Accept** on the cookie banner; before that, no cookies are set and all requests go to the site itself or to Supabase. Page views are sent with generic titles and with event IDs removed, so no event, gift or people names reach Google. "Cookie settings" in the footer reopens the banner, and declining removes the `_ga` cookies.
+No advertising. Google Analytics (added October 2, 2026) loads only after a visitor clicks **Accept** on the cookie banner; before that, no cookies are set and all requests go to the site itself or to Supabase. Page views are sent with generic titles and with event IDs removed, so no event, gift or people names reach Google. "Cookie settings" in the footer reopens the banner, and declining removes the `_ga` cookies. Google signals and ad personalisation are disabled in code, Enhanced measurement's **Outbound clicks** is turned off in the GA property (so gift store links aren't sent), and a live test confirmed no event names or IDs reach Google.
 
 ## Checks performed
 
