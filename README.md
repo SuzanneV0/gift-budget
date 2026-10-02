@@ -4,6 +4,8 @@
 
 Keep gift-giving on budget for any occasion: birthdays, holidays, baby showers, housewarmings.
 
+![GiftingSmart event page: a budget progress bar above per-person gift lists with price charts, an On sale tag and an At target tag](docs/screenshot.png)
+
 - Create an event (e.g. "Lauren's birthday", "Christmas 2026", "Jane's baby shower")
 - Set **one budget for the whole event**, or **a budget per person**
 - Build a shopping list. Gift prices are tracked over time, and you get an alert when something goes on sale or reaches your target price
@@ -101,6 +103,7 @@ Open http://localhost:5173. With `config.js` left empty, the app runs in **demo 
 | `config.js` | Supabase URL and anon key (both public); filled in at build time on Vercel |
 | `pages/` | Content for the About, Privacy, Cookies, Terms and Legal pages |
 | `scripts/build.mjs` | Vercel build: copies the site to `dist/`, generates the info pages and sitemap, writes `config.js`. **Set your name, contact email and province in `SITE` here.** |
+| `scripts/screenshot.mjs` | Re-captures `docs/screenshot.png` from the demo in a separate headless Chrome |
 | `scripts/render-images.sh` | Re-renders `og-image.png` and `apple-touch-icon.png` from the HTML sources beside it |
 | `fonts/`, `vendor/` | Self-hosted fonts and supabase-js (with their licences), so visitors never contact third parties |
 | `docs/privacy-audit.md` | Privacy audit, security review and action items |
