@@ -43,6 +43,8 @@ flowchart LR
 | Scheduling | `pg_cron` + `pg_net`, calling the price checker every 6 hours |
 | Hosting | Vercel with a custom domain; a small Node build script generates the info pages, sitemap and config |
 
+**Lighthouse** (October 2026, live site): 100 for performance, accessibility, best practices and SEO, on both mobile and desktop.
+
 ### Key decisions
 
 - **One data interface, two implementations.** `SupabaseStore` and `LocalStore` expose the same async API, so the whole UI runs unchanged against the real database or against `localStorage`. That one choice gives local development with no setup and the no-account **Try the demo** mode on the live site.
