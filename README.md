@@ -40,6 +40,7 @@ Open http://localhost:5173. With `config.js` left empty, the app runs in **demo 
 | `js/budget.js` | Budget maths and over-budget warnings |
 | `supabase/migrations/` | Tables with row-level security, plus the 6-hourly cron job |
 | `supabase/functions/check-prices/` | Edge Function that records prices and creates sale alerts |
+| `supabase/functions/_shared/cors.ts` | Which websites may call the functions from a browser (`ALLOWED_ORIGINS` secret overrides the default) |
 | `supabase/functions/delete-account/` | Edge Function that deletes the signed-in user's account and all their data |
 | `supabase/functions/_shared/pricing.js` | Sale detection and the mock price provider (shared by server and browser) |
 

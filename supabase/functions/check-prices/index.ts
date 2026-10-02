@@ -5,27 +5,24 @@
 //   - by a signed-in user from the app, body {"event_id"?: uuid, "gift_id"?: uuid}
 //     (only that user's gifts are checked)
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { corsHeaders, originAllowed } from '../_shared/cors.ts';
 import { detectAlert } from '../_shared/pricing.js';
 import { getProvider } from './providers/index.ts';
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_GIFTS_PER_RUN = 500;
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...CORS, 'Content-Type': 'application/json' },
-  });
-}
+// User-triggered checks per account (the cron run isn't limited). Keeps costs
+// bounded once a paid price API is connected.
+const RATE_LIMIT = 20;
+const RATE_WINDOW = '10 minutes';
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
+  const cors = corsHeaders(req);
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), { status, headers: { ...cors, 'Content-Type': 'application/json' } });
+
+  if (!originAllowed(req)) return json({ error: 'origin not allowed' }, 403);
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
 
   const admin = createClient(
@@ -50,6 +47,19 @@ Deno.serve(async (req) => {
     const { data, error } = await admin.auth.getUser(jwt);
     if (error || !data.user) return json({ error: 'unauthorized' }, 401);
     userId = data.user.id;
+
+    const { data: allowed, error: limitError } = await admin.rpc('consume_price_check', {
+      p_user: userId,
+      p_limit: RATE_LIMIT,
+      p_window: RATE_WINDOW,
+    });
+    if (limitError) {
+      console.error('rate limit check failed', limitError);
+      return json({ error: 'try again later' }, 503);
+    }
+    if (allowed !== true) {
+      return json({ error: 'rate_limited', message: 'Too many price checks. Please try again in a few minutes.' }, 429);
+    }
   }
 
   let query = admin

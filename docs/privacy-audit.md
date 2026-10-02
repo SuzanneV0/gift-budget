@@ -19,7 +19,8 @@ This is a technical audit, not legal advice. Have a lawyer review the policies b
 | 7 | Email/password sign-up enabled in Supabase but unused | **Fixed**: email provider turned off |
 | 8 | Data stored in the US (cross-border transfer) | **Disclosed** in the privacy policy, as PIPEDA requires |
 | 9 | Policy placeholders: name, contact email, province | **Fixed**: GiftingSmart, giftingsmartshopper@gmail.com, Ontario |
-| 10 | Edge Functions accept requests from any website (CORS `*`) | Low risk, optional hardening |
+| 10 | Edge Functions accept requests from any website (CORS `*`) | **Fixed**: only giftingsmart.shop (and localhost) may call them from a browser; others get 403 |
+| 11 | No limit on user-triggered price checks | **Fixed**: 20 per account per 10 minutes, enforced in the database |
 
 ## What personal information exists, and where
 
@@ -73,6 +74,5 @@ Items 1 to 3 were completed on October 1, 2026 (details filled in, email sign-up
 5. **Keep policies in sync:** if you add analytics, email alerts, a real price API or a new provider, update the privacy and cookie pages first and change `SITE.updated`.
 
 ## Optional hardening (low priority)
-- Restrict the Edge Functions' CORS header to `https://giftingsmart.shop` and `http://localhost:5173` instead of `*`. Today they already require a valid sign-in token, so the risk is small.
 - When a real price API is connected, send it only the gift's store link (never your name, email or the recipient's name), and add the provider to the privacy policy's provider table.
 - Consider a data-retention job that removes price history older than, say, 12 months for gifts that were bought long ago.

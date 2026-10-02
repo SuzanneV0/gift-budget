@@ -201,7 +201,13 @@ class SupabaseStore {
 
   async checkPrices(scope) {
     const { data, error } = await this.db.functions.invoke('check-prices', { body: scope });
-    if (error) throw error;
+    if (error) {
+      // Non-2xx responses carry the Response in error.context.
+      if (error.context?.status === 429) {
+        throw new Error('You’ve checked prices a lot in the last few minutes. Please try again shortly.');
+      }
+      throw error;
+    }
     return data;
   }
 
