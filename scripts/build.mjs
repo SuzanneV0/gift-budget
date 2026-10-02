@@ -11,9 +11,9 @@ import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } f
 // highlighted placeholder, so they're easy to spot and fill in.
 const SITE = {
   url: 'https://giftingsmart.shop',
-  operator: '', // e.g. 'Jane Smith'
+  operator: 'GiftingSmart',
   email: 'giftingsmartshopper@gmail.com',
-  province: '', // e.g. 'Ontario'
+  province: 'Ontario',
   updated: 'October 1, 2026', // change when a policy changes
 };
 

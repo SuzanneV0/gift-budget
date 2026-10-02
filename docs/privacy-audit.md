@@ -16,9 +16,9 @@ This is a technical audit, not legal advice. Have a lawyer review the policies b
 | 4 | No privacy policy, cookie policy, terms or legal notice | **Fixed**: five pages added, linked in the footer and at sign-in |
 | 5 | Security headers allowed more than needed | **Fixed**: stricter CSP (self + Supabase only), HSTS, COOP |
 | 6 | Names of other people (gift recipients) collected | **Mitigated**: hint to use a first name or nickname; policy covers it |
-| 7 | Email/password sign-up enabled in Supabase but unused | **Action for you**: turn it off (see below) |
+| 7 | Email/password sign-up enabled in Supabase but unused | **Fixed**: email provider turned off |
 | 8 | Data stored in the US (cross-border transfer) | **Disclosed** in the privacy policy, as PIPEDA requires |
-| 9 | Policy placeholders: name, contact email, province | **Action for you**: fill in `SITE` in `scripts/build.mjs` |
+| 9 | Policy placeholders: name, contact email, province | **Fixed**: GiftingSmart, giftingsmartshopper@gmail.com, Ontario |
 | 10 | Edge Functions accept requests from any website (CORS `*`) | Low risk, optional hardening |
 
 ## What personal information exists, and where
@@ -63,6 +63,8 @@ No analytics, advertising or tracking scripts, and **no cookies** are set by the
 - The Supabase **secret and service role keys are never published**: the build refuses to write anything except the URL and publishable key.
 
 ## Your action items
+
+Items 1 to 3 were completed on October 1, 2026 (details filled in, email sign-up turned off, consent screen links updated to giftingsmart.shop).
 
 1. **Fill in the placeholders.** In `scripts/build.mjs`, set `SITE.operator` (your name), `SITE.email` (a contact address; a dedicated one like privacy@ is best) and `SITE.province`. Push, and every page updates.
 2. **Turn off email/password sign-up in Supabase:** Dashboard → Authentication → Sign In / Providers → **Email** → disable. The app only uses Google, but while Email is enabled, anyone with the public API key could create an email/password account directly through the API.
