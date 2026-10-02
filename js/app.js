@@ -228,9 +228,9 @@ function renderNav() {
   const menuTheme = `<hr><button data-theme-toggle class="theme-btn">${ICONS.moon}${ICONS.sun}<span class="theme-text"></span></button>`;
 
   nav.innerHTML = `
-    <a href="#/" class="brand" aria-label="Gift Budget home">
+    <a href="#/" class="brand" aria-label="GiftingSmart home">
       <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><use href="#logo"/></svg>
-      <span>Gift Budget</span>
+      <span>GiftingSmart</span>
     </a>
     ${
       user
@@ -505,7 +505,7 @@ function accountPage() {
 
     <section class="card">
       <h2>Your data</h2>
-      <p class="muted small">Download a copy of everything Gift Budget stores about you, or delete your account.
+      <p class="muted small">Download a copy of everything GiftingSmart stores about you, or delete your account.
         See the <a href="/privacy">Privacy policy</a> for details.</p>
       <div class="head-actions">
         <button class="btn ghost" id="export">Download my data</button>
@@ -556,7 +556,7 @@ async function exportData() {
     });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `gift-budget-data-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `giftingsmart-data-${new Date().toISOString().slice(0, 10)}.json`;
     document.body.append(a);
     a.click();
     a.remove();
@@ -1315,7 +1315,7 @@ async function render() {
   } finally {
     app.removeAttribute('aria-busy');
   }
-  document.title = current ? `${current.name} · Gift Budget` : TITLES[path] ? `${TITLES[path]} · Gift Budget` : 'Gift Budget: stay on budget for every gift';
+  document.title = current ? `${current.name} · GiftingSmart` : TITLES[path] ? `${TITLES[path]} · GiftingSmart` : 'GiftingSmart: gift planner and budget tracker for every occasion';
   window.scrollTo(0, 0);
   app.focus({ preventScroll: true });
 }
@@ -1358,5 +1358,5 @@ async function init() {
 
 init().catch((e) => {
   console.error(e);
-  app.innerHTML = `<section class="empty"><h1>Gift Budget couldn't start</h1><p class="muted">${esc(e.message)}</p></section>`;
+  app.innerHTML = `<section class="empty"><h1>GiftingSmart couldn't start</h1><p class="muted">${esc(e.message)}</p></section>`;
 });

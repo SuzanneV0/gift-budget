@@ -12,7 +12,7 @@ import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } f
 const SITE = {
   url: 'https://giftingsmart.shop',
   operator: '', // e.g. 'Jane Smith'
-  email: '', // e.g. 'hello@example.com'
+  email: 'giftingsmartshopper@gmail.com',
   province: '', // e.g. 'Ontario'
   updated: 'October 1, 2026', // change when a policy changes
 };
@@ -61,15 +61,15 @@ for (const name of PAGES) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${esc(title)} · Gift Budget</title>
+  <title>${esc(title)} · GiftingSmart</title>
   <meta name="description" content="${esc(description)}">
   <link rel="canonical" href="${url}">
   <meta name="theme-color" content="#16132a">
   <meta name="color-scheme" content="light dark">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Gift Budget">
+  <meta property="og:site_name" content="GiftingSmart">
   <meta property="og:url" content="${url}">
-  <meta property="og:title" content="${esc(title)} · Gift Budget">
+  <meta property="og:title" content="${esc(title)} · GiftingSmart">
   <meta property="og:description" content="${esc(description)}">
   <meta property="og:image" content="${SITE.url}/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -83,11 +83,11 @@ for (const name of PAGES) {
   <a href="#content" class="skip">Skip to content</a>
   <header class="site-header">
     <div class="nav">
-      <a href="/" class="brand" aria-label="Gift Budget home">
+      <a href="/" class="brand" aria-label="GiftingSmart home">
         <img src="/icon.svg" width="28" height="28" alt="">
-        <span>Gift Budget</span>
+        <span>GiftingSmart</span>
       </a>
-      <div class="nav-right"><a href="/#/events" class="btn primary sm">Open Gift Budget</a></div>
+      <div class="nav-right"><a href="/#/events" class="btn primary sm">Open GiftingSmart</a></div>
     </div>
   </header>
   <main id="content">

@@ -1,4 +1,4 @@
-# Gift Budget
+# GiftingSmart
 
 Keep gift-giving on budget for any occasion: birthdays, holidays, baby showers, housewarmings.
 

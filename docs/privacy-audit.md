@@ -1,4 +1,4 @@
-# Privacy audit: Gift Budget
+# Privacy audit: GiftingSmart
 
 **Date:** October 1, 2026
 **Scope:** the live site (giftingsmart.shop, formerly gift-budget.vercel.app), the browser code, the Supabase project *GiftingSmart* (database, auth, Edge Functions, cron) and the Vercel project *gift-budget*.
