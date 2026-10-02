@@ -8,7 +8,7 @@
     <b>The short version</b>
     <ul>
       <li>We collect only what the app needs: your Google name and email, and the events, people, gifts and budgets you enter.</li>
-      <li>No ads, no analytics, no tracking cookies. We never sell or rent your data.</li>
+      <li>No ads. Google Analytics runs only if you accept it on the cookie banner, and you can change your mind any time. We never sell or rent your data.</li>
       <li>Your data is stored with Supabase and served by Vercel, in the United States.</li>
       <li>You can download everything or delete your account at any time from <a href="/#/account">My account</a>.</li>
     </ul>
@@ -44,6 +44,9 @@
   <ul>
     <li>Our hosting and database providers keep short-term server logs (IP address, browser type, the address requested, and
       the time) to run the service securely and investigate abuse or errors.</li>
+    <li><b>Only if you accept analytics cookies:</b> Google Analytics collects usage information such as the pages you view, approximate location (derived from your IP address), device and browser type, and how you arrived at the site.
+      We never send it your name, email, or the names of your events, gifts or people, and event pages are reported without
+      their IDs.</li>
   </ul>
   <h3>Information about other people</h3>
   <p>When you add someone to an event, you're giving us their name. Please enter only what you need, such as a first name or a
@@ -56,8 +59,9 @@
     <li>To check prices for gifts you track and alert you to sales and target prices.</li>
     <li>To keep the service working, prevent abuse and fix problems.</li>
     <li>To respond when you contact us.</li>
+    <li>If you accept analytics cookies, to understand how the site is used so we can improve it.</li>
   </ul>
-  <p>We don't use your information for advertising or profiling, and we don't use it to train AI models. We rely on your consent,
+  <p>We don't use your information for advertising or profiling (Google Analytics' advertising features are turned off), and we don't use it to train AI models. We rely on your consent,
     which you give by creating an account and can withdraw at any time by deleting your account.</p>
 
   <h2>Who we share it with</h2>
@@ -70,6 +74,7 @@
         <tr><td>Supabase</td><td>Sign-in, database and the scheduled price checker</td><td>United States (AWS, us-east-1)</td></tr>
         <tr><td>Vercel</td><td>Hosts and delivers the website</td><td>United States, with a global delivery network</td></tr>
         <tr><td>Google</td><td>"Sign in with Google" (only when you choose to sign in)</td><td>Global</td></tr>
+        <tr><td>Google Analytics</td><td>Usage statistics (only if you accept analytics cookies)</td><td>United States</td></tr>
       </tbody>
     </table>
   </div>
@@ -85,6 +90,8 @@
     <li>When you delete your account, your account, events, people, gifts, price history and alerts are deleted immediately and
       permanently. Encrypted backups kept by our database provider are overwritten within their normal backup cycle.</li>
     <li>Server logs are kept for a limited period by our providers, typically up to 30 days.</li>
+    <li>Google Analytics data is kept according to the retention setting on our Google Analytics account, for no more than
+      14 months.</li>
   </ul>
 
   <h2>Your rights and choices</h2>
@@ -92,6 +99,8 @@
     <li><b>Access and portability:</b> download all your data as a file from <a href="/#/account">My account → Download my data</a>.</li>
     <li><b>Correction:</b> edit any event, person or gift in the app at any time.</li>
     <li><b>Deletion:</b> delete your account from <a href="/#/account">My account → Delete my account</a>.</li>
+    <li><b>Analytics:</b> accept or decline analytics cookies at any time with <b>Cookie settings</b> in the footer. Declining
+      removes Google Analytics' cookies from your browser.</li>
     <li><b>Withdrawing consent:</b> stop using the service and delete your account. You can also remove GiftingSmart's access in your
       <a href="https://myaccount.google.com/connections" rel="noopener">Google account settings</a>.</li>
     <li><b>Questions or complaints:</b> contact us at {{email}}. We'll reply within 30 days. If you're not satisfied, you can complain
@@ -100,8 +109,9 @@
   </ul>
 
   <h2>Cookies and local storage</h2>
-  <p>We don't use cookies. The app keeps your sign-in session and a few settings in your browser's local storage, only so the app
-    works. See the <a href="/cookies">Cookie policy</a> for the full list.</p>
+  <p>We use cookies only for Google Analytics, and only if you accept them on the cookie banner. The app also keeps your sign-in
+    session and a few settings in your browser's local storage so it works. See the <a href="/cookies">Cookie policy</a> for the
+    full list.</p>
 
   <h2>Security</h2>
   <p>Data travels over encrypted connections (HTTPS). Database rules ensure each account can read and change only its own data, and

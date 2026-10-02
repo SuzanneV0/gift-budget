@@ -21,7 +21,7 @@ const PAGES = ['about', 'privacy', 'cookies', 'terms', 'legal'];
 
 const OUT = 'dist';
 const FILES = [
-  'index.html', 'styles.css', 'icon.svg', 'config.js', 'theme.js', 'robots.txt', 'og-image.png', 'apple-touch-icon.png',
+  'index.html', 'styles.css', 'icon.svg', 'config.js', 'theme.js', 'analytics.js', 'robots.txt', 'og-image.png', 'apple-touch-icon.png',
   'js', 'fonts', 'vendor', 'supabase/functions/_shared/pricing.js',
 ];
 
@@ -78,6 +78,7 @@ for (const name of PAGES) {
   <link rel="stylesheet" href="/fonts/fonts.css">
   <link rel="stylesheet" href="/styles.css">
   <script src="/theme.js"></script>
+  <script src="/analytics.js" defer></script>
 </head>
 <body>
   <a href="#content" class="skip">Skip to content</a>

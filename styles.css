@@ -773,3 +773,25 @@ dialog::backdrop { background: rgb(15 20 18 / 45%); }
 .or::before, .or::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
 .demo-btn { width: 100%; }
 .demo-banner .link-btn { color: inherit; font-weight: 600; margin-left: .35rem; }
+
+/* Cookie consent banner (analytics.js) */
+.consent {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  z-index: 60;
+  width: min(640px, calc(100vw - 32px));
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgb(22 19 42 / 22%);
+  padding: 1rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.consent p { margin: 0; flex: 1 1 280px; font-size: .92rem; }
+.consent-actions { display: flex; gap: .5rem; margin-left: auto; }

@@ -1344,6 +1344,9 @@ async function render() {
   } finally {
     app.removeAttribute('aria-busy');
   }
+  // Analytics page view (sent only if the visitor accepted cookies). The
+  // title is generic so event names never leave the browser.
+  window.giftAnalytics?.trackRoute(`/#${path}`, current ? 'Event' : TITLES[path] || 'Home');
   document.title = current ? `${current.name} · GiftingSmart` : TITLES[path] ? `${TITLES[path]} · GiftingSmart` : 'GiftingSmart: gift planner and budget tracker for every occasion';
   window.scrollTo(0, 0);
   app.focus({ preventScroll: true });
