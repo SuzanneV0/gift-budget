@@ -10,7 +10,7 @@ import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } f
 // Site owner details used on the info pages. Empty values show as a
 // highlighted placeholder, so they're easy to spot and fill in.
 const SITE = {
-  url: 'https://gift-budget.vercel.app',
+  url: 'https://giftingsmart.shop',
   operator: '', // e.g. 'Jane Smith'
   email: '', // e.g. 'hello@example.com'
   province: '', // e.g. 'Ontario'

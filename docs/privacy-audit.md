@@ -1,7 +1,7 @@
 # Privacy audit: Gift Budget
 
 **Date:** October 1, 2026
-**Scope:** the live site (gift-budget.vercel.app), the browser code, the Supabase project *GiftingSmart* (database, auth, Edge Functions, cron) and the Vercel project *gift-budget*.
+**Scope:** the live site (giftingsmart.shop, formerly gift-budget.vercel.app), the browser code, the Supabase project *GiftingSmart* (database, auth, Edge Functions, cron) and the Vercel project *gift-budget*.
 **Framework:** Canada's PIPEDA fair information principles, plus general good practice (GDPR-style data minimisation and user rights).
 
 This is a technical audit, not legal advice. Have a lawyer review the policies before relying on them, especially once the placeholders (name, contact email, province) are filled in.
@@ -66,11 +66,11 @@ No analytics, advertising or tracking scripts, and **no cookies** are set by the
 
 1. **Fill in the placeholders.** In `scripts/build.mjs`, set `SITE.operator` (your name), `SITE.email` (a contact address; a dedicated one like privacy@ is best) and `SITE.province`. Push, and every page updates.
 2. **Turn off email/password sign-up in Supabase:** Dashboard → Authentication → Sign In / Providers → **Email** → disable. The app only uses Google, but while Email is enabled, anyone with the public API key could create an email/password account directly through the API.
-3. **Google OAuth consent screen:** add links to `https://gift-budget.vercel.app/privacy` and `/terms`, and the app's home page. Google requires these to publish the app beyond test users.
+3. **Google OAuth consent screen:** add links to `https://giftingsmart.shop/privacy` and `/terms`, and the app's home page. Google requires these to publish the app beyond test users.
 4. **Have the policies reviewed** by a lawyer familiar with Canadian privacy law (and Quebec's Law 25 if you'll have users there).
 5. **Keep policies in sync:** if you add analytics, email alerts, a real price API or a new provider, update the privacy and cookie pages first and change `SITE.updated`.
 
 ## Optional hardening (low priority)
-- Restrict the Edge Functions' CORS header to `https://gift-budget.vercel.app` and `http://localhost:5173` instead of `*`. Today they already require a valid sign-in token, so the risk is small.
+- Restrict the Edge Functions' CORS header to `https://giftingsmart.shop` and `http://localhost:5173` instead of `*`. Today they already require a valid sign-in token, so the risk is small.
 - When a real price API is connected, send it only the gift's store link (never your name, email or the recipient's name), and add the provider to the privacy policy's provider table.
 - Consider a data-retention job that removes price history older than, say, 12 months for gifts that were bought long ago.

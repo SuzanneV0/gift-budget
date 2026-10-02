@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gift-budget.vercel.app/sitemap.xml
+Sitemap: https://giftingsmart.shop/sitemap.xml

@@ -48,7 +48,7 @@ The live setup: Vercel project **gift-budget** is linked to Supabase project **G
    - Authorized redirect URI: `https://<project-ref>.supabase.co/auth/v1/callback`
    - Configure the OAuth consent screen (app name, support email).
 3. In Supabase, go to **Authentication → Sign In / Providers → Google**, enable it, and paste the client ID and secret.
-4. In **Authentication → URL Configuration**, set the Site URL to the production URL (`https://gift-budget.vercel.app`) and add `http://localhost:5173` to the redirect URLs.
+4. In **Authentication → URL Configuration**, set the Site URL to the production URL (`https://giftingsmart.shop`) and add `http://localhost:5173` to the redirect URLs.
 5. **Database**: apply the migrations (`supabase link --project-ref <project-ref>` then `supabase db push`, or paste them into the SQL editor). The schedule migration creates a random `cron_secret` in Vault. Then store the project URL in Vault so the cron job knows where to call:
    ```sql
    select vault.create_secret('https://<project-ref>.supabase.co', 'project_url');
