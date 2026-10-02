@@ -11,6 +11,10 @@ Keep gift-giving on budget for any occasion: birthdays, holidays, baby showers, 
 
 Plain HTML/CSS/JS with no build step, plus [Supabase](https://supabase.com) for Google sign-in, the database and the scheduled price checker. Hosts on Vercel like Medsprout.
 
+## Demo for visitors
+
+The live site has a **Try the demo** button (home page, login page and menu). It runs the app on sample data kept only in the visitor's browser (no account, nothing sent to Supabase) and shows a banner with an **Exit demo** link. Prices throughout are simulated by the `mock` price provider, and the site says so in the footer, on event pages, the About page and the Terms.
+
 ## Run it locally
 
 ```bash

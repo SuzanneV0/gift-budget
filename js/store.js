@@ -4,8 +4,43 @@
 //                  config.js has no Supabase project yet
 import { mockPrice, detectAlert, round2 } from '../supabase/functions/_shared/pricing.js';
 
+// Set when a visitor chooses "Try the demo" on the live site: the app then
+// runs on sample data kept in this browser instead of the real database.
+const DEMO_FLAG = 'giftbudget-demo-mode';
+
+function readDemoFlag() {
+  try {
+    return localStorage.getItem(DEMO_FLAG) === 'on';
+  } catch {
+    return false;
+  }
+}
+
+export function enterDemo() {
+  try {
+    localStorage.setItem(DEMO_FLAG, 'on');
+  } catch {
+    /* storage blocked: the demo can't persist, so it just won't start */
+  }
+}
+
+export function exitDemo() {
+  try {
+    localStorage.removeItem(DEMO_FLAG);
+    localStorage.removeItem(LOCAL_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
 export async function createStore(config) {
-  if (config.supabaseUrl && config.supabaseAnonKey) {
+  const configured = !!(config.supabaseUrl && config.supabaseAnonKey);
+  if (configured && readDemoFlag()) {
+    const demo = new LocalStore();
+    demo.visitorDemo = true; // live site, visitor chose the demo
+    return demo;
+  }
+  if (configured) {
     await loadScript('vendor/supabase.js'); // self-hosted @supabase/supabase-js (UMD build)
     const client = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey, {
       auth: { flowType: 'pkce', detectSessionInUrl: true, persistSession: true },
@@ -241,8 +276,13 @@ class LocalStore {
     for (const cb of this.listeners) cb(this.data.user);
   }
 
-  // In demo mode "Continue with Google" signs in as a local demo user.
+  // In local development (no Supabase), "Continue with Google" starts the demo.
   async signInWithGoogle() {
+    await this.startDemo();
+  }
+
+  /** Signs in as a local demo user with sample events. */
+  async startDemo() {
     this.data = emptyData();
     this.data.user = {
       id: 'demo-user',
@@ -439,7 +479,7 @@ function seedDemo(store) {
   const year = new Date().getFullYear();
   const xmas = {
     id: uid(),
-    name: `Christmas ${year}`,
+    name: `Holiday gifts ${year}`,
     event_date: `${year}-12-25`,
     budget_mode: 'per_recipient',
     total_budget: null,

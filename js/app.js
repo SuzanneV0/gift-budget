@@ -1,4 +1,4 @@
-import { createStore } from './store.js';
+import { createStore, enterDemo, exitDemo } from './store.js';
 import * as B from './budget.js';
 import { isOnSale } from '../supabase/functions/_shared/pricing.js';
 
@@ -267,6 +267,7 @@ function renderNav() {
             <nav aria-label="Menu">
               ${menuLink('/', 'Home')}
               <a href="/about">About us</a>
+              ${store.demo ? '' : '<button type="button" data-start-demo>Try the demo</button>'}
             </nav>
             ${menuTheme}
           </div>`
@@ -389,7 +390,8 @@ function homePage() {
   const cta = user
     ? `<a href="#/events/new" class="btn primary lg">Plan a new event</a>
        <a href="#/events" class="btn ghost lg">My events</a>`
-    : `<a href="#/login" class="btn primary lg">Get started, it's free</a>`;
+    : `<a href="#/login" class="btn primary lg">Get started, it's free</a>
+       ${store.demo ? '' : '<button type="button" class="btn ghost lg" data-start-demo>Try the demo</button>'}`;
   return `
     <section class="hero">
       <div class="hero-text">
@@ -448,7 +450,9 @@ function loginPage() {
         store.demo
           ? `<p class="demo-note">Demo mode: Supabase isn't connected yet, so this signs you in as a demo user and keeps
              data in this browser only. See the README to turn on real Google sign-in.</p>`
-          : ''
+          : `<div class="or"><span>or</span></div>
+             <button type="button" class="btn ghost lg demo-btn" data-start-demo>Try the demo</button>
+             <p class="muted small">No account needed. Explore with sample data that stays in this browser.</p>`
       }
     <p class="muted small legal-note">By continuing, you agree to the <a href="/terms">Terms of use</a> and
         <a href="/privacy">Privacy policy</a>. We never post to your Google account or read your contacts.</p>
@@ -543,6 +547,7 @@ function mountAccount(root) {
   root.querySelector('#export').addEventListener('click', exportData);
   root.querySelector('#delete-account').addEventListener('click', deleteAccountModal);
   root.querySelector('#signout').addEventListener('click', async () => {
+    if (store.visitorDemo) return leaveDemo();
     await store.signOut();
     go('/');
   });
@@ -589,6 +594,7 @@ function deleteAccountModal() {
     btn.textContent = 'Deleting\u2026';
     try {
       await store.deleteAccount();
+      if (store.visitorDemo) return leaveDemo();
       dialog.close();
       user = null;
       notifications = [];
@@ -877,7 +883,11 @@ function renderEvent(e) {
     </div>
 
     ${groups.map((gr) => recipientGroup(e, gr.r, gr.gifts)).join('')}
-    ${store.demo ? `<p class="muted small center">Demo mode: prices are simulated. "Check prices now" moves the demo clock forward six hours.</p>` : ''}`;
+    <p class="muted small center">${
+      store.demo
+        ? 'Prices are simulated for this demo. "Check prices now" moves the demo clock forward six hours.'
+        : 'Prices are simulated for demonstration and don\u2019t come from real stores.'
+    }</p>`;
 }
 
 function recipientGroup(e, r, gifts) {
@@ -1268,6 +1278,25 @@ async function onEventAction(e) {
 
 app.addEventListener('click', onEventAction);
 
+// ---------------------------------------------------------------- demo
+
+function startDemo() {
+  enterDemo();
+  location.hash = '#/events';
+  location.reload();
+}
+
+function leaveDemo() {
+  exitDemo();
+  location.hash = '#/';
+  location.reload();
+}
+
+document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-start-demo]')) startDemo();
+  else if (e.target.closest('[data-exit-demo]')) leaveDemo();
+});
+
 function notFoundPage() {
   return `<section class="empty"><h1>Not found</h1><p class="muted">That page or event doesn't exist.</p>
     <a href="#/" class="btn primary">Go home</a></section>`;
@@ -1348,7 +1377,16 @@ async function init() {
   });
 
   window.addEventListener('hashchange', render);
-  document.getElementById('demo-banner').hidden = !store.demo;
+  const banner = document.getElementById('demo-banner');
+  if (store.visitorDemo) {
+    banner.innerHTML = `You're exploring the demo with sample data, saved only in this browser.
+      <button type="button" class="link-btn" data-exit-demo>Exit demo</button>`;
+    if (!user) {
+      await store.startDemo();
+      user = await store.getUser();
+    }
+  }
+  banner.hidden = !store.demo;
   await render();
   refreshNotifications();
   // Pick up new sale alerts while the app is open.
