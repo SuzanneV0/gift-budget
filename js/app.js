@@ -1350,6 +1350,7 @@ async function render() {
   document.title = current ? `${current.name} · GiftingSmart` : TITLES[path] ? `${TITLES[path]} · GiftingSmart` : 'GiftingSmart: gift planner and budget tracker for every occasion';
   window.scrollTo(0, 0);
   app.focus({ preventScroll: true });
+  document.documentElement.classList.add('app-ready');
 }
 
 async function init() {

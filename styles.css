@@ -377,6 +377,9 @@ main[aria-busy='true'] > * { opacity: .6; }
 
 /* Static, crawlable intro in index.html; the app replaces it once it starts. */
 .js .prerender { display: none; }
+/* Until the first page is drawn, keep the footer below the fold so it doesn't
+   jump down when content appears (avoids layout shift on load). */
+.js:not(.app-ready) main#app { min-height: 100vh; }
 
 /* ---------- legal / info pages */
 .legal { max-width: 720px; margin: 0 auto; }
