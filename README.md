@@ -9,7 +9,67 @@ Keep gift-giving on budget for any occasion: birthdays, holidays, baby showers, 
 - A progress bar at the top of each event shows spent / still on the list / budget
 - Warnings before a purchase takes you near (90%) or over budget, and when your whole list would go over
 
-Plain HTML/CSS/JS with no build step, plus [Supabase](https://supabase.com) for Google sign-in, the database and the scheduled price checker. Hosts on Vercel like Medsprout.
+Plain HTML/CSS/JS, plus [Supabase](https://supabase.com) for Google sign-in, the database and the scheduled price checker, hosted on Vercel.
+
+**Live:** [giftingsmart.shop](https://giftingsmart.shop). Use **Try the demo** to explore with sample data, no account needed.
+
+## How it's built
+
+### Architecture
+
+```mermaid
+flowchart LR
+  subgraph Browser["Browser (static site on Vercel)"]
+    UI["app.js<br/>router + pages"] --> Store{"store.js<br/>one data interface"}
+    Store -->|demo| Local["LocalStore<br/>localStorage"]
+  end
+  Store -->|signed in| Auth["Supabase Auth<br/>Google OAuth, PKCE"]
+  Store -->|REST| DB[("Postgres<br/>row-level security")]
+  Store -->|"Check prices now"| Fn["Edge Function<br/>check-prices"]
+  Cron["pg_cron<br/>every 6 hours"] -->|Vault secret| Fn
+  Fn --> Provider["Price provider<br/>(mock today)"]
+  Fn --> DB
+```
+
+| Layer | Technology |
+|---|---|
+| Front end | Plain HTML, CSS and JavaScript (ES modules). No framework or bundler; the only library is a self-hosted copy of supabase-js |
+| Database and auth | Supabase: Postgres with row-level security, Google sign-in, Vault for secrets |
+| Server code | Supabase Edge Functions (Deno, TypeScript) |
+| Scheduling | `pg_cron` + `pg_net`, calling the price checker every 6 hours |
+| Hosting | Vercel with a custom domain; a small Node build script generates the info pages, sitemap and config |
+
+### Key decisions
+
+- **One data interface, two implementations.** `SupabaseStore` and `LocalStore` expose the same async API, so the whole UI runs unchanged against the real database or against `localStorage`. That one choice gives local development with no setup and the no-account **Try the demo** mode on the live site.
+- **Security lives in the database.** Every table has row-level security tied to `auth.uid()`; a trigger stops gifts and people being attached to someone else's event; table grants follow least privilege, and tables the browser shouldn't see have no policies at all. Rules were verified by impersonating the `anon` and `authenticated` roles inside rolled-back transactions (see `docs/privacy-audit.md`).
+- **Shared pricing logic.** Sale detection and the simulated price model live in one plain ES module (`_shared/pricing.js`) that runs both in the Deno Edge Function and in the browser's demo mode. A drop counts as a sale only if it's at least 5% below the last price *and* the lowest in 30 days, which avoids alerting on noise.
+- **Pluggable price providers.** The checker talks to a `PriceProvider` interface. The current `mock` provider produces deterministic, realistic price movement; a real API (Keepa, SerpApi, …) is one file plus a secret.
+- **No hand-copied secrets for the cron job.** A migration generates a random secret in Supabase Vault; the scheduled job sends it, and a `security definer` database function verifies it. Nothing has to be pasted between dashboards.
+- **Rate limiting in Postgres.** User-triggered price checks are limited to 20 per 10 minutes per account by a database function that takes a per-user advisory lock, so concurrent requests can't slip past the count.
+- **Privacy by design.** No cookies, analytics or ads. Fonts and the Supabase client are self-hosted, so visitors' browsers contact only this site and Supabase. The Google profile photo is never loaded (initials instead). Users can download all their data or delete their account, which cascades through every table.
+- **Strict browser security.** A Content Security Policy allows scripts, fonts and images from this site only and network calls to Supabase only; all user text is escaped before rendering, and gift links must be `http(s)`. The Edge Functions reject browser requests from other websites.
+- **Accessible and responsive.** Semantic HTML, focus moved to new content on each page change, live-region announcements for budget warnings, a keyboard-friendly hamburger menu below 1024px, light/dark themes (system default or manual, with no flash on load), and colour pairs checked against WCAG AA contrast.
+- **Inclusive by default.** Occasion suggestions span many traditions (Hanukkah, Eid, Diwali, Lunar New Year, Vaisakhi, Nowruz and more), each labelled with the year it next occurs.
+
+### Worth a look in the code
+
+| File | Why |
+|---|---|
+| [`js/budget.js`](js/budget.js) | Pure budget maths: per-event and per-person budgets, and the "this purchase would put you over" warnings |
+| [`js/store.js`](js/store.js) | The shared data interface and its two implementations |
+| [`supabase/functions/_shared/pricing.js`](supabase/functions/_shared/pricing.js) | Deterministic price simulation and the sale-detection rule |
+| [`supabase/functions/check-prices/index.ts`](supabase/functions/check-prices/index.ts) | Two auth paths (user token or cron secret), rate limit, provider calls, alerts |
+| [`supabase/migrations/`](supabase/migrations/) | Schema, row-level security, cron schedule, rate limiting and the security hardening |
+| [`scripts/build.mjs`](scripts/build.mjs) | Build step that generates pages and refuses to publish secret keys |
+| [`docs/privacy-audit.md`](docs/privacy-audit.md) | Privacy audit and security review, with findings and fixes |
+
+### What I'd add next
+
+- Automated tests: unit tests for `budget.js` and `pricing.js`, and Playwright end-to-end tests for the main flows (create event, add gift, mark bought, over-budget warning).
+- A real price provider, with per-store parsing and caching.
+- Email alerts for sales, sent from the Edge Function.
+- Shared events, so a family can plan one gift list together.
 
 ## Demo for visitors
 
@@ -21,7 +81,7 @@ The live site has a **Try the demo** button (home page, login page and menu). It
 python -m http.server 5173
 ```
 
-Open http://localhost:5173. With `config.js` left empty, the app runs in **demo mode**: "Continue with Google" signs you in as a demo user, data stays in your browser, and a sample Christmas event is created. "Check prices now" moves a simulated clock forward six hours so you can watch prices move and sale alerts appear.
+Open http://localhost:5173. With `config.js` left empty, the app runs in **demo mode**: "Continue with Google" signs you in as a demo user, data stays in your browser, and sample events are created. "Check prices now" moves a simulated clock forward six hours so you can watch prices move and sale alerts appear.
 
 ## Project layout
 
